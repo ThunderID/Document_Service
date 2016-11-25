@@ -1,0 +1,34 @@
+#document
+document_nginx:
+    build: ./nginx
+    ports:
+        - 8400:80
+    links:
+        - document_php
+    volumes_from:
+        - document
+document_php:
+    build: ./php/
+    expose:
+        - 9000
+    links:
+        - document_mongo
+    volumes_from:
+        - document
+#    command: sh /var/www/html/composer.sh
+document:
+    image: php:7.0-fpm
+    volumes:
+        - ./apps:/var/www/html
+    command: "true"
+document_mongo:
+    image: mongo:latest
+    expose:
+        - 27017
+    volumes_from:
+        - data
+data:
+    image: mongo:latest
+    volumes:
+        - ./database:/var/lib/mongo
+    command: "true"
