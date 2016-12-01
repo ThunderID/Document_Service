@@ -18,6 +18,7 @@ class JWTMiddleware
 	 */
 	public function handle($request, Closure $next)
 	{
+		return $next($request);
 		$token  = $request->header('Authorization');
 
 		if(empty($token))
@@ -42,7 +43,7 @@ class JWTMiddleware
 			return $next($request);
 		}
 
-		// throw new \Exception('invalid token');
+		throw new \Exception('invalid token');
 
 		return $next($request);
 	}

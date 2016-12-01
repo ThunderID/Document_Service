@@ -46,15 +46,15 @@ class TemplateController extends Controller
 			{
 				switch (strtolower($key)) 
 				{
-					case 'id':
-						$result		= $result->id($value);
-						break;
-					case 'title':
-						$result		= $result->title($value);
-						break;
-					case 'writer':
-						$result		= $result->writer($value);
-						break;
+					// case 'id':
+					// 	$result		= $result->id($value);
+					// 	break;
+					// case 'title':
+					// 	$result		= $result->title($value);
+					// 	break;
+					// case 'writer':
+					// 	$result		= $result->writer($value);
+					// 	break;
 					default:
 						# code...
 						break;
@@ -95,13 +95,13 @@ class TemplateController extends Controller
 		if(Input::has('skip'))
 		{
 			$skip					= Input::get('skip');
-			$result					= $result->skip($skip);
+			$result					= $result->skip((int)$skip);
 		}
 
 		if(Input::has('take'))
 		{
 			$take					= Input::get('take');
-			$result					= $result->take($take);
+			$result					= $result->take((int)$take);
 		}
 
 		$result 					= $result->get()->toArray();
@@ -134,7 +134,7 @@ class TemplateController extends Controller
 			$result 	= new Template;
 		}
 		
-		$result->fill(Input::only('title', 'paragraph', 'writer'));
+		$result->fill(Input::only('title', 'type', 'paragraph', 'writer', 'owner'));
 
 		if($result->save())
 		{

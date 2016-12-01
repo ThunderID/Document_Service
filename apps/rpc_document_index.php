@@ -19,7 +19,7 @@
 		//url-ify the data for the POST
 		$fields_string	= http_build_query($fields);
 
-		$url			= 'http://172.17.0.8/documents?'.$fields_string;
+		$url			= 'http://172.17.0.7/documents?'.$fields_string;
 
 		//open connection
 		$header[]		= "Authorization: ".$data['header']['token'];
@@ -51,7 +51,8 @@
 	$channel->basic_qos(null, 1, null);
 	$channel->basic_consume('tlab.document.index', '', false, false, false, false, $callback);
 
-	while(count($channel->callbacks)) {
+	while(count($channel->callbacks)) 
+	{
 	    $channel->wait();
 	}
 

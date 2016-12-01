@@ -7,7 +7,7 @@
 	$connection		= new AMQPStreamConnection('172.17.0.2', 5672, 'guest', 'guest');
 	$channel 		= $connection->channel();
 
-	$channel->queue_declare('tlab.document.store', false, false, false, false);
+	$channel->queue_declare('tlab.template.store', false, false, false, false);
 
 	echo " [x] Awaiting RPC requests\n";
 	$callback = function($req) 
@@ -19,7 +19,7 @@
 		//url-ify the data for the POST
 		$fields_string	= http_build_query($fields);
 
-		$url			= 'http://172.17.0.7/documents';
+		$url			= 'http://172.17.0.7/templates';
 
 		//open connection
 		$header[]		= "Authorization: ".$data['header']['token'];
@@ -50,7 +50,7 @@
 	};
 
 	$channel->basic_qos(null, 1, null);
-	$channel->basic_consume('tlab.document.store', '', false, false, false, false, $callback);
+	$channel->basic_consume('tlab.template.store', '', false, false, false, false, $callback);
 
 	while(count($channel->callbacks)) 
 	{

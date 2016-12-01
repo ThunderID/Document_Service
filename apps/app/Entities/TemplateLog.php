@@ -2,21 +2,21 @@
 
 namespace App\Entities;
 
-use App\Entities\Observers\TemplateObserver;
+use App\Entities\Observers\TemplateLogObserver;
 
 /**
- * Used for Template Models
+ * Used for TemplateLog Models
  * 
  * @author cmooy
  */
-class Template extends BaseModel
+class TemplateLog extends BaseModel
 {
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $collection			= 'service_templates';
+	protected $collection			= 'service_template_logs';
 
 	/**
 	 * Date will be returned as carbon
@@ -50,6 +50,8 @@ class Template extends BaseModel
 											'paragraph'						,
 											'writer'						,
 											'owner'							,
+											'parent'						,
+											'next'							,
 										];
 										
 	/**
@@ -84,7 +86,7 @@ class Template extends BaseModel
 	{
         parent::boot();
 
-		Template::observe(new TemplateObserver);
+		TemplateLog::observe(new TemplateLogObserver);
     }
 
 	/* ---------------------------------------------------------------------------- SCOPES ----------------------------------------------------------------------------*/
@@ -147,5 +149,30 @@ class Template extends BaseModel
 		}
 
 		return $query->where('writer._id', 'regexp', '/^'. preg_quote($variable) .'$/i');
+	}
+
+	/**
+	 * scope to get condition where parent
+	 *
+	 * @param string or array of parent
+	 **/
+	public function scopeParent($query, $variable)
+	{
+		if(is_array($variable))
+		{
+			return 	$query->whereIn('parent', $variable);
+		}
+
+		return $query->where('parent', 'regexp', '/^'. preg_quote($variable) .'$/i');
+	}
+
+	/**
+	 * scope to get condition where there is no next list
+	 *
+	 * @param string or array of there is no next list
+	 **/
+	public function scopeNoNext($query, $variable)
+	{
+		return $query->wherenull('next');
 	}
 }

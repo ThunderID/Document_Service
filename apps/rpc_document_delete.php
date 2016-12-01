@@ -19,7 +19,7 @@
 		//url-ify the data for the POST
 		$fields_string	= http_build_query($fields);
 
-		$url			= 'http://172.17.0.8/documents';
+		$url			= 'http://172.17.0.7/documents';
 
 		//open connection
 		$header[]		= "Authorization: ".$data['header']['token'];
@@ -52,7 +52,8 @@
 	$channel->basic_qos(null, 1, null);
 	$channel->basic_consume('tlab.document.delete', '', false, false, false, false, $callback);
 
-	while(count($channel->callbacks)) {
+	while(count($channel->callbacks)) 
+	{
 	    $channel->wait();
 	}
 
