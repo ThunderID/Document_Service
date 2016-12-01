@@ -2,21 +2,21 @@
 
 namespace App\Entities;
 
-use App\Entities\Observers\DocumentObserver;
+use App\Entities\Observers\DocumentLogObserver;
 
 /**
- * Used for Document Models
+ * Used for DocumentLog Models
  * 
  * @author cmooy
  */
-class Document extends BaseModel
+class DocumentLog extends BaseModel
 {
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $collection			= 'service_documents';
+	protected $collection			= 'service_document_logs';
 
 	/**
 	 * Date will be returned as carbon
@@ -50,6 +50,8 @@ class Document extends BaseModel
 											'paragraph'						,
 											'writer'						,
 											'owner'							,
+											'parent'						,
+											'next'							,
 										];
 										
 	/**
@@ -84,7 +86,7 @@ class Document extends BaseModel
 	{
         parent::boot();
 
-		Document::observe(new DocumentObserver);
+		DocumentLog::observe(new DocumentLogObserver);
     }
 
 	/* ---------------------------------------------------------------------------- SCOPES ----------------------------------------------------------------------------*/
@@ -147,5 +149,30 @@ class Document extends BaseModel
 		}
 
 		return $query->where('writer._id', 'regexp', '/^'. preg_quote($variable) .'$/i');
+	}
+
+	/**
+	 * scope to get condition where parent
+	 *
+	 * @param string or array of parent
+	 **/
+	public function scopeParent($query, $variable)
+	{
+		if(is_array($variable))
+		{
+			return 	$query->whereIn('parent', $variable);
+		}
+
+		return $query->where('parent', 'regexp', '/^'. preg_quote($variable) .'$/i');
+	}
+
+	/**
+	 * scope to get condition where there is no next list
+	 *
+	 * @param string or array of there is no next list
+	 **/
+	public function scopeNoNext($query, $variable)
+	{
+		return $query->wherenull('next');
 	}
 }

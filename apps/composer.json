@@ -11,11 +11,8 @@
         "php-amqplib/php-amqplib": "^2.6",
         "guzzlehttp/guzzle": "^6.2",
         "palanik/lumen-cors": "dev-master",
-        "dingo/api": "1.0.*@dev",
-        "jenssegers/mongodb": "^3.1",
-        "tymon/jwt-auth": "1.0.0-alpha.2",
-        "generationtux/jwt-artisan": "^0.1.8",
-        "thunderlab/microservices_common": "dev-master"
+        "jenssegers/mongodb": "^3.0",
+        "lcobucci/jwt": "^3.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

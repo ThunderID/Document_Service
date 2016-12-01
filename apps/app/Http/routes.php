@@ -16,7 +16,55 @@ $app->get('/', function () use ($app)
     return 'Welcome Thunder Document Service';
 });
 
-$api 							= app('Dingo\Api\Routing\Router');
+// $api 							= app('Dingo\Api\Routing\Router');
+
+// $api->version('v1', function ($api) 
+// {
+//     $api->group(['namespace' => 'App\Http\Controllers'], function ($api) 
+// 	{
+// 		$api->get('/templates',
+// 			[
+// 				'uses'				=> 'TemplateController@index',
+// 				// 'middleware'		=> 'jwt|company:read-template',
+// 			]
+// 		);
+
+// 		$api->post('/templates',
+// 			[
+// 				'uses'				=> 'TemplateController@post',
+// 				// 'middleware'		=> 'jwt|company:store-template',
+// 			]
+// 		);
+
+// 		$api->delete('/templates',
+// 			[
+// 				'uses'				=> 'TemplateController@delete',
+// 				// 'middleware'		=> 'jwt|company:delete-template',
+// 			]
+// 		);
+
+// 		$api->get('/documents',
+// 			[
+// 				'uses'				=> 'DocumentController@index',
+// 				// 'middleware'		=> 'jwt|company:read-document',
+// 			]
+// 		);
+
+// 		$api->post('/documents',
+// 			[
+// 				'uses'				=> 'DocumentController@post',
+// 				// 'middleware'		=> 'jwt|company:store-document',
+// 			]
+// 		);
+
+// 		$api->delete('/documents',
+// 			[
+// 				'uses'				=> 'DocumentController@delete',
+// 				// 'middleware'		=> 'jwt|company:delete-document',
+// 			]
+// 		);
+// 	});
+// });
 
 $app->get('/templates',
 	[

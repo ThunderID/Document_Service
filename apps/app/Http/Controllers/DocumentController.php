@@ -54,8 +54,14 @@ class DocumentController extends Controller
 					case 'title':
 						$result		= $result->title($value);
 						break;
-					case 'writer':
-						$result		= $result->writer($value);
+					case 'type':
+						$result		= $result->type($value);
+						break;
+					case 'writerid':
+						$result		= $result->writerid($value);
+						break;
+					case 'ownerid':
+						$result		= $result->ownerid($value);
 						break;
 					default:
 						# code...
@@ -97,18 +103,18 @@ class DocumentController extends Controller
 		if(Input::has('skip'))
 		{
 			$skip					= Input::get('skip');
-			$result					= $result->skip($skip);
+			$result					= $result->skip((int)$skip);
 		}
 
 		if(Input::has('take'))
 		{
 			$take					= Input::get('take');
-			$result					= $result->take($take);
+			$result					= $result->take((int)$take);
 		}
 
-		$result 					= $this->getStructure($result->get()->toArray());
+		$result 					= $result->get(['_id', 'title', 'type', 'paragraph', 'writer', 'owner'])->toArray();
 		
-		return response()->json( JSend::success([array_merge($result, ['count' => $count])])->asArray())
+		return response()->json( JSend::success(['data' => $result, 'count' => $count])->asArray())
 				->setCallback($this->request->input('callback'));
 	}
 
@@ -136,11 +142,11 @@ class DocumentController extends Controller
 			$result 	= new Document;
 		}
 		
-		$result->fill(Input::only('title', 'type', 'paragraph', 'writer'));
+		$result->fill(Input::only('title', 'type', 'paragraph', 'writer', 'owner'));
 
 		if($result->save())
 		{
-			return response()->json( JSend::success($this->getStructure([$result->toArray()])['data'][0])->asArray())
+			return response()->json( JSend::success($result->toArray())->asArray())
 					->setCallback($this->request->input('callback'));
 		}
 		
@@ -162,11 +168,11 @@ class DocumentController extends Controller
 	{
 		$document		= Document::id(Input::get('id'))->first();
 
-		$result 		= $document;
+		$result 		= $document->toArray();
 
 		if($document && $document->delete())
 		{
-			return response()->json( JSend::success($this->getStructure([$result->toArray()])['data'][0])->asArray())
+			return response()->json( JSend::success($result)->asArray())
 					->setCallback($this->request->input('callback'));
 		}
 		elseif(!$document)
@@ -175,62 +181,5 @@ class DocumentController extends Controller
 		}
 
 		return response()->json( JSend::error($document->getError())->asArray());
-	}
-
-	/**
-	 * Fractal Modifying Returned Value
-	 *
-	 * getStructure method used to transforming response format and included UI inside (@UInside)
-	 */
-	public function getStructure($draft)
-	{
-		$fractal 					= new Manager();
-		$resource 					= new Collection($draft, function(array $document) {
-										return [
-												'id' 	=> [
-																'value' => $document['_id'],
-																'type'	=> 'string',
-																'max'	=> '255',
-															],
-												'title'	=> [
-																'value' => $document['title'],
-																'type'	=> 'string',
-																'max'	=> '255',
-															],
-												'paragraph'	=> [
-																'value' => $document['paragraph'],
-																'type'	=> 'array',
-																'max'	=> '255',
-															],
-												'writer'	=> [
-																'value' => $document['writer'],
-																'type'	=> 'array',
-																'max'	=> '255',
-															],
-												'created_at'	=> [
-																'value' => $document['created_at'],
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-												'updated_at' 	=> [
-																'value' => $document['updated_at'],
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-												'deleted_at' 	=> [
-																'value' => null,
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-											];
-										});
-
-		// Turn that into a structured array (handy for XML views or auto-YAML converting)
-		$array 						= $fractal->createData($resource)->toArray();
-
-		return $array;
 	}
 }

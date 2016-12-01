@@ -15,7 +15,7 @@ document_php:
         - document_mongo
     volumes_from:
         - document
-    command: sh /var/www/html/composer.sh
+#    command: sh /var/www/html/composer.sh
 document:
     image: php:7.0-fpm
     volumes:

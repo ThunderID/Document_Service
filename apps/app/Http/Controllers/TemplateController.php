@@ -10,8 +10,7 @@ use Illuminate\Http\Request;
 
 use App\Entities\Template;
 
-use League\Fractal\Manager;
-use League\Fractal\Resource\Collection;
+use Lcobucci\JWT\Parser;
 
 /**
  * Template resource representation.
@@ -105,9 +104,9 @@ class TemplateController extends Controller
 			$result					= $result->take($take);
 		}
 
-		$result 					= $this->getStructure($result->get()->toArray());
+		$result 					= $result->get()->toArray();
 		
-		return response()->json( JSend::success([array_merge($result, ['count' => $count])])->asArray())
+		return response()->json( JSend::success(['data' => $result, 'count' => $count])->asArray())
 				->setCallback($this->request->input('callback'));
 	}
 
@@ -139,8 +138,8 @@ class TemplateController extends Controller
 
 		if($result->save())
 		{
-			return response()->json( JSend::success($this->getStructure([$result->toArray()])['data'][0])->asArray())
-					->setCallback($this->request->input('callback'));
+			return response()->json( JSend::success($result->toArray())->asArray())
+						->setCallback($this->request->input('callback'));
 		}
 		
 		return response()->json( JSend::error($result->getError())->asArray());
@@ -165,7 +164,7 @@ class TemplateController extends Controller
 
 		if($template && $template->delete())
 		{
-			return response()->json( JSend::success($this->getStructure([$result->toArray()])['data'][0])->asArray())
+			return response()->json( JSend::success($result->toArray())->asArray())
 					->setCallback($this->request->input('callback'));
 		}
 		elseif(!$template)
@@ -174,60 +173,5 @@ class TemplateController extends Controller
 		}
 
 		return response()->json( JSend::error($template->getError())->asArray());
-	}
-
-	/**
-	 * Fractal Modifying Returned Value
-	 *
-	 * getStructure method used to transforming response format and included UI inside (@UInside)
-	 */
-	public function getStructure($draft)
-	{
-		$fractal 					= new Manager();
-		$resource 					= new Collection($draft, function(array $template) {
-										return [
-												'id' 	=> [
-																'value' => $template['_id'],
-																'type'	=> 'string',
-																'max'	=> '255',
-															],
-												'title'	=> [
-																'value' => $template['title'],
-																'type'	=> 'string',
-																'max'	=> '255',
-															],
-												'paragraph'	=> [
-																'value' => $template['paragraph'],
-																'type'	=> 'array',
-															],
-												'writer'	=> [
-																'value' => $template['writer'],
-																'type'	=> 'array',
-															],
-												'created_at'	=> [
-																'value' => $template['created_at'],
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-												'updated_at' 	=> [
-																'value' => $template['updated_at'],
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-												'deleted_at' 	=> [
-																'value' => null,
-																'type'	=> 'datetime',
-																'zone'	=> env('APP_TIMEZONE', ''),
-																'format'=> 'Y-m-d H:i:s',
-															],
-											];
-										});
-
-		// Turn that into a structured array (handy for XML views or auto-YAML converting)
-		$array 						= $fractal->createData($resource)->toArray();
-
-		return $array;
 	}
 }
