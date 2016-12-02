@@ -46,15 +46,18 @@ class TemplateController extends Controller
 			{
 				switch (strtolower($key)) 
 				{
-					// case 'id':
-					// 	$result		= $result->id($value);
-					// 	break;
-					// case 'title':
-					// 	$result		= $result->title($value);
-					// 	break;
-					// case 'writer':
-					// 	$result		= $result->writer($value);
-					// 	break;
+					case 'id':
+						$result		= $result->id($value);
+						break;
+					case 'type':
+						$result		= $result->type($value);
+						break;
+					case 'title':
+						$result		= $result->title($value);
+						break;
+					case 'writer':
+						$result		= $result->writer($value);
+						break;
 					default:
 						# code...
 						break;

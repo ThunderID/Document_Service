@@ -61,7 +61,9 @@ class Template extends BaseModel
 											'title'							=> 'required|max:255',
 											'type'							=> 'required|max:255',
 											'paragraph.*.content'			=> 'required',
-											'writer'						=> 'required',
+											'writer._id'					=> 'required',
+											'owner._id'						=> 'required',
+											'owner.type'					=> 'in:person,organization',
 										];
 
 
@@ -147,5 +149,20 @@ class Template extends BaseModel
 		}
 
 		return $query->where('writer._id', 'regexp', '/^'. preg_quote($variable) .'$/i');
+	}
+
+	/**
+	 * scope to get condition where owner type
+	 *
+	 * @param string or array of owner type
+	 **/
+	public function scopeOwnerType($query, $variable)
+	{
+		if(is_array($variable))
+		{
+			return 	$query->whereIn('owner.type', $variable);
+		}
+
+		return $query->where('owner.type', 'regexp', '/^'. preg_quote($variable) .'$/i');
 	}
 }

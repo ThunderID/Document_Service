@@ -63,7 +63,9 @@ class TemplateLog extends BaseModel
 											'title'							=> 'required|max:255',
 											'type'							=> 'required|max:255',
 											'paragraph.*.content'			=> 'required',
-											'writer'						=> 'required',
+											'writer._id'					=> 'required',
+											'owner._id'						=> 'required',
+											'owner.type'					=> 'in:person,organization',
 										];
 
 
