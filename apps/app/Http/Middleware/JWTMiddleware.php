@@ -6,6 +6,9 @@ use Closure;
 
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Keychain;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 
 class JWTMiddleware
 {
@@ -18,7 +21,6 @@ class JWTMiddleware
 	 */
 	public function handle($request, Closure $next)
 	{
-		return $next($request);
 		$token  = $request->header('Authorization');
 
 		if(empty($token))
@@ -38,7 +40,10 @@ class JWTMiddleware
 		$data->setAudience(env('JWT_AUDIENCE','http://example.org'));
 		$data->setId(env('JWT_ID','4f1g23a12aa'));
 
-		if($token->validate($data))
+		$signer 	= new Sha256();
+		$keychain 	= new Keychain();
+
+		if($token->verify($signer, $keychain->getPublicKey(file_get_contents('public_rsa.key'))))
 		{
 			return $next($request);
 		}
