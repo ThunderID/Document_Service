@@ -34,12 +34,6 @@ class JWTMiddleware
 
 		$token	= (new Parser())->parse((string) $token); // Parses from a string
 
-		$data	= new ValidationData(); // It will use the current time to validate (iat, nbf and exp)
-
-		$data->setIssuer(env('JWT_ISSUER','http://example.com'));
-		$data->setAudience(env('JWT_AUDIENCE','http://example.org'));
-		$data->setId(env('JWT_ID','4f1g23a12aa'));
-
 		$signer 	= new Sha256();
 		$keychain 	= new Keychain();
 
