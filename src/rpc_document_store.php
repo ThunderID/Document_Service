@@ -7,7 +7,7 @@
 	$connection		= new AMQPStreamConnection('172.17.0.2', 5672, 'guest', 'guest');
 	$channel 		= $connection->channel();
 
-	$channel->queue_declare('notarispro.document.index', false, false, false, false);
+	$channel->queue_declare('notarispro.document.store', false, false, false, false);
 
 	echo " [x] Awaiting RPC requests\n";
 	$callback = function($req) 
@@ -19,7 +19,7 @@
 		//url-ify the data for the POST
 		$fields_string	= http_build_query($fields);
 
-		$url			= 'http://172.17.0.7/documents?'.$fields_string;
+		$url			= 'http://172.17.0.5/documents';
 
 		//open connection
 		$header[]		= "Authorization: ".$data['header']['token'];
@@ -34,7 +34,8 @@
 							  CURLOPT_MAXREDIRS 		=> 10,
 							  CURLOPT_TIMEOUT 			=> 30,
 							  CURLOPT_HTTP_VERSION 		=> CURL_HTTP_VERSION_1_1,
-							  CURLOPT_CUSTOMREQUEST 	=> "GET",
+							  CURLOPT_CUSTOMREQUEST 	=> "POST",
+							  CURLOPT_POSTFIELDS 		=> $fields_string,
 							  CURLOPT_HTTPHEADER 		=> $header,
 						));
 
@@ -49,7 +50,7 @@
 	};
 
 	$channel->basic_qos(null, 1, null);
-	$channel->basic_consume('notarispro.document.index', '', false, false, false, false, $callback);
+	$channel->basic_consume('notarispro.document.store', '', false, false, false, false, $callback);
 
 	while(count($channel->callbacks)) 
 	{

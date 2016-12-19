@@ -64,7 +64,7 @@ $app->singleton(
 */
 
 $app->middleware([
-   App\Http\Middleware\JWTMiddleware::class
+   // App\Http\Middleware\JWTMiddleware::class
 ]);
 
 // $app->routeMiddleware([
