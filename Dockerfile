@@ -107,6 +107,7 @@ RUN sed -i \
 
 # Add Scripts
 ADD scripts/start.sh /start.sh
+ADD scripts/adaptor.sh /adaptor.sh
 ADD scripts/pull /usr/bin/pull
 ADD scripts/push /usr/bin/push
 ADD scripts/letsencrypt-setup /usr/bin/letsencrypt-setup
@@ -126,14 +127,6 @@ RUN cd /var/www/html && composer install
 # share .env file
 #ADD ./.env /var/www/html/.env
 
-RUN php /var/www/html/rpc_document_index.php '#'
-RUN php /var/www/html/rpc_document_store.php '#'
-RUN php /var/www/html/rpc_document_delete.php '#'
-RUN php /var/www/html/rpc_template_index.php '#'
-RUN php /var/www/html/rpc_template_store.php '#'
-RUN php /var/www/html/rpc_template_delete.php '#'
-RUN php /var/www/html/rpc_user_index.php '#'
-
 VOLUME /var/www/html
 
 #EXPOSE 443 80
@@ -141,3 +134,5 @@ EXPOSE 9112
 
 #CMD ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
 CMD ["/start.sh"]
+CMD ["/adaptor.sh"]
+
